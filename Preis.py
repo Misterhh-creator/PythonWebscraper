@@ -5,32 +5,36 @@ from bs4 import BeautifulSoup
 import json
 import matplotlib.pyplot as plt
 import numpy as np
-# 1. Git commit
+
+# 1. Git commit Anpassung Reichweite
 # 2. Suche aus der Bitcoin Preisliste den max und den min. Wert
 # 3. Passe in Zeile 17 die Reichweite des Plots an den min und den max Wert an
 
 def darstellen_als_treppenplot(x: list, y: list):
+      ymax = max(y)
+      ymin = min(y)
+      ymaxneu = ymax + (ymax-ymin)/2
+      yminneu = ymin - (ymax-ymin)/2
       plt.style.use('_mpl-gallery') 
       fig, ax = plt.subplots() 
       ax.plot(x, y, linewidth=2.0)
       ax.set(xlim=(0, 220), xticks=np.arange(0, 220), 
-             ylim=(27100, 27300), yticks=np.arange(27100, 27300)) #zwischen 0 und 8 in Schritten 1-7
+             ylim=(yminneu, ymaxneu), yticks=np.arange(yminneu, ymaxneu)) #zwischen 0 und 8 in Schritten 1-7
       plt.show()
     
 
-Preisdaten = {}
-Anzahl=10
-#def scrapebitcoin():
-    # def scrapebitcoin(Anzahl: int):
 
 def timesleep():
      time.sleep(10)
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:40.0) Gecko/20100101 Firefox/36.0'}
+def scrapebitcoin(Anzahl: int):
+    Preisdaten = {}   
+      
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:40.0) Gecko/20100101 Firefox/36.0'}
 
-URL = "https://finance.yahoo.com/quote/BTC-USD"
+    URL = "https://finance.yahoo.com/quote/BTC-USD"
 
-while Anzahl>0:
+    while Anzahl>0:
         Anzahl -= 1
 
         response = requests.get(URL, headers=headers)
@@ -43,6 +47,10 @@ while Anzahl>0:
             print(Preisdaten)
         
         timesleep()
+
+    return Preisdaten
+
+Preisdaten = scrapebitcoin(10)
 
 x = list(Preisdaten.keys())
 y = list(Preisdaten.values())
